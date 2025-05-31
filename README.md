@@ -14,6 +14,12 @@ A command-line tool for AWS EC2 Spot Instance Advisor. Spotter helps you find th
 
 ## Installation
 
+### From homebrew
+
+```bash
+brew install kohbis/spotter/spotter
+```
+
 ### From Crates.io
 
 ```bash
