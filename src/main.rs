@@ -86,6 +86,33 @@ async fn fetch_spot_advisor_data(client: &Client) -> Result<Value, Box<dyn Error
         }
     }
 
+    // Check for instance_types data structure
+    if let Some(instance_types) = data.get("instance_types") {
+        if let Some(instance_types_obj) = instance_types.as_object() {
+            log::debug!(
+                "Found instance_types with {} entries",
+                instance_types_obj.len()
+            );
+            // Print a few examples
+            for (i, (instance_name, instance_info)) in instance_types_obj.iter().enumerate() {
+                if i < 3 {
+                    log::debug!("  Instance type {}: {}", i + 1, instance_name);
+                    if let Some(info) = instance_info.as_object() {
+                        if let Some(cores) = info.get("cores") {
+                            log::debug!("    Cores: {}", cores);
+                        }
+                        if let Some(ram_gb) = info.get("ram_gb") {
+                            log::debug!("    RAM GB: {}", ram_gb);
+                        }
+                        if let Some(emr) = info.get("emr") {
+                            log::debug!("    EMR: {}", emr);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     Ok(data)
 }
 
@@ -219,6 +246,8 @@ fn display_spot_data(
         Cell::new("Instance Type"),
         Cell::new("Region"),
         Cell::new("Interruption Rate"),
+        Cell::new("Memory (GB)"),
+        Cell::new("Cores"),
     ];
 
     if show_spot_price {
@@ -230,6 +259,33 @@ fn display_spot_data(
     table.add_row(Row::new(headers));
 
     log::info!("Processing spot instance data...");
+
+    // Extract instance specifications from the instance_types data
+    let mut instance_specs: HashMap<String, (String, String)> = HashMap::new();
+    if let Some(instance_types) = advisor_data.get("instance_types") {
+        if let Some(instance_types_obj) = instance_types.as_object() {
+            log::debug!(
+                "Processing {} instance type specifications",
+                instance_types_obj.len()
+            );
+            for (instance_name, instance_info) in instance_types_obj {
+                if let Some(info) = instance_info.as_object() {
+                    let ram_gb = info
+                        .get("ram_gb")
+                        .and_then(Value::as_f64)
+                        .map(|r| r.to_string())
+                        .unwrap_or_else(|| "N/A".to_string());
+                    let cores = info
+                        .get("cores")
+                        .and_then(Value::as_u64)
+                        .map(|c| c.to_string())
+                        .unwrap_or_else(|| "N/A".to_string());
+
+                    instance_specs.insert(instance_name.clone(), (ram_gb, cores));
+                }
+            }
+        }
+    }
 
     // Process advisor data
     let advisor_regions = advisor_data["spot_advisor"].as_object().unwrap();
@@ -317,6 +373,12 @@ fn display_spot_data(
                             .entry(instance_name.clone())
                             .or_insert_with(HashMap::new);
 
+                        // Get memory and cores information from instance_specs
+                        let (memory_gb, cores) = instance_specs
+                            .get(instance_name)
+                            .map(|(ram, cores)| (ram.clone(), cores.clone()))
+                            .unwrap_or_else(|| ("N/A".to_string(), "N/A".to_string()));
+
                         // Insert or update the instance info for this region
                         region_map.insert(
                             region_name.clone(),
@@ -325,6 +387,8 @@ fn display_spot_data(
                                 savings: format!("{}%", savings),
                                 linux_spot_price: "N/A".to_string(),
                                 windows_spot_price: "N/A".to_string(),
+                                memory_gb: memory_gb.clone(),
+                                cores: cores.clone(),
                             },
                         );
                     }
@@ -445,6 +509,8 @@ fn display_spot_data(
                             savings: "N/A".to_string(),
                             linux_spot_price,
                             windows_spot_price,
+                            memory_gb: "N/A".to_string(),
+                            cores: "N/A".to_string(),
                         },
                     );
                     instance_data.insert(simple_name, region_map);
@@ -493,6 +559,8 @@ fn display_spot_data(
             Cell::new(&instance_name),
             Cell::new(region),
             Cell::new(&info.interruption_rate),
+            Cell::new(&info.memory_gb),
+            Cell::new(&info.cores),
         ];
 
         if show_spot_price {
@@ -526,4 +594,6 @@ struct InstanceInfo {
     savings: String,
     linux_spot_price: String,
     windows_spot_price: String,
+    memory_gb: String,
+    cores: String,
 }
