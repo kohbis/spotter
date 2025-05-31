@@ -1,4 +1,5 @@
 use clap::Parser;
+use clap_verbosity_flag::{InfoLevel, Verbosity};
 use prettytable::{Cell, Row, Table};
 use reqwest::Client;
 use serde_json::Value;
@@ -19,11 +20,17 @@ struct Cli {
     /// Show spot prices for Linux and Windows (for latest pricing information, check AWS Management Console)
     #[arg(long)]
     spot_price: bool,
+
+    #[clap(flatten)]
+    verbose: Verbosity<InfoLevel>,
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
+    env_logger::Builder::new()
+        .filter_level(cli.verbose.log_level_filter())
+        .init();
 
     // Fetch data from both sources
     let client = Client::new();
@@ -43,7 +50,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 }
 
 async fn fetch_spot_advisor_data(client: &Client) -> Result<Value, Box<dyn Error>> {
-    println!("Fetching spot advisor data...");
+    log::info!("Fetching spot advisor data...");
     let url = "https://spot-bid-advisor.s3.amazonaws.com/spot-advisor-data.json";
     let response = client.get(url).send().await?;
     let data = response.json::<Value>().await?;
@@ -52,9 +59,9 @@ async fn fetch_spot_advisor_data(client: &Client) -> Result<Value, Box<dyn Error
     if let Some(spot_advisor) = data.get("spot_advisor") {
         if let Some(regions) = spot_advisor.as_object() {
             if let Some((region_name, region_data)) = regions.iter().next() {
-                println!("Sample region from advisor data: {}", region_name);
+                log::debug!("Sample region from advisor data: {}", region_name);
                 if let Some(instances) = region_data.as_object() {
-                    println!(
+                    log::debug!(
                         "Number of instance entries in region {}: {}",
                         region_name,
                         instances.len()
@@ -63,13 +70,13 @@ async fn fetch_spot_advisor_data(client: &Client) -> Result<Value, Box<dyn Error
                     // Print a few instance names to understand the structure
                     for (i, (instance_name, instance_info)) in instances.iter().enumerate() {
                         if i < 5 {
-                            println!("  Instance {}: {}", i + 1, instance_name);
+                            log::debug!("  Instance {}: {}", i + 1, instance_name);
                             if let Some(info) = instance_info.as_object() {
                                 if let Some(rate) = info.get("r") {
-                                    println!("    Rate value: {}", rate);
+                                    log::debug!("    Rate value: {}", rate);
                                 }
                                 if let Some(savings) = info.get("s") {
-                                    println!("    Savings value: {}", savings);
+                                    log::debug!("    Savings value: {}", savings);
                                 }
                             }
                         }
@@ -83,7 +90,7 @@ async fn fetch_spot_advisor_data(client: &Client) -> Result<Value, Box<dyn Error
 }
 
 async fn fetch_spot_price_data(client: &Client) -> Result<Value, Box<dyn Error>> {
-    println!("Fetching spot price data...");
+    log::info!("Fetching spot price data...");
     let url = "http://spot-price.s3.amazonaws.com/spot.js";
     let response = client.get(url).send().await?;
     let text = response.text().await?;
@@ -113,7 +120,7 @@ async fn fetch_spot_price_data(client: &Client) -> Result<Value, Box<dyn Error>>
             if let Some(regions_array) = regions.as_array() {
                 if !regions_array.is_empty() {
                     if let Some(region_name) = regions_array[0].get("region") {
-                        println!("Sample region from price data: {}", region_name);
+                        log::debug!("Sample region from price data: {}", region_name);
                     }
 
                     // Print more detailed information about the price data structure
@@ -121,7 +128,7 @@ async fn fetch_spot_price_data(client: &Client) -> Result<Value, Box<dyn Error>>
                         if let Some(instance_types_array) = instance_types.as_array() {
                             if !instance_types_array.is_empty() {
                                 if let Some(instance_type) = instance_types_array[0].get("type") {
-                                    println!(
+                                    log::debug!(
                                         "Sample instance type from price data: {}",
                                         instance_type
                                     );
@@ -130,13 +137,13 @@ async fn fetch_spot_price_data(client: &Client) -> Result<Value, Box<dyn Error>>
                                     if let Some(sizes) = instance_types_array[0].get("sizes") {
                                         if let Some(sizes_array) = sizes.as_array() {
                                             if !sizes_array.is_empty() {
-                                                println!(
+                                                log::debug!(
                                                     "  Number of sizes: {}",
                                                     sizes_array.len()
                                                 );
                                                 if let Some(size_name) = sizes_array[0].get("size")
                                                 {
-                                                    println!("  Sample size: {}", size_name);
+                                                    log::debug!("  Sample size: {}", size_name);
 
                                                     // Print information about value columns
                                                     if let Some(value_columns) =
@@ -145,7 +152,7 @@ async fn fetch_spot_price_data(client: &Client) -> Result<Value, Box<dyn Error>>
                                                         if let Some(value_columns_array) =
                                                             value_columns.as_array()
                                                         {
-                                                            println!(
+                                                            log::debug!(
                                                                 "    Number of value columns: {}",
                                                                 value_columns_array.len()
                                                             );
@@ -158,7 +165,7 @@ async fn fetch_spot_price_data(client: &Client) -> Result<Value, Box<dyn Error>>
                                                                     if let Some(name) =
                                                                         value_column.get("name")
                                                                     {
-                                                                        println!(
+                                                                        log::debug!(
                                                                             "    Value column {}: {}",
                                                                             i + 1,
                                                                             name
@@ -168,11 +175,11 @@ async fn fetch_spot_price_data(client: &Client) -> Result<Value, Box<dyn Error>>
                                                                         if let Some(_spot) =
                                                                             value_column.get("spot")
                                                                         {
-                                                                            println!(
+                                                                            log::debug!(
                                                                                 "      Has spot price information"
                                                                             );
                                                                         } else {
-                                                                            println!(
+                                                                            log::debug!(
                                                                                 "      No spot price information"
                                                                             );
                                                                         }
@@ -222,19 +229,19 @@ fn display_spot_data(
     headers.push(Cell::new("Savings"));
     table.add_row(Row::new(headers));
 
-    println!("Processing spot instance data...");
+    log::info!("Processing spot instance data...");
 
     // Process advisor data
     let advisor_regions = advisor_data["spot_advisor"].as_object().unwrap();
-    println!(
+    log::debug!(
         "Number of regions in advisor data: {}",
         advisor_regions.len()
     );
 
     // Check if the specified region exists in advisor data
     if !advisor_regions.contains_key(region) {
-        println!("Warning: Region '{}' not found in advisor data", region);
-        println!(
+        log::debug!("Warning: Region '{}' not found in advisor data", region);
+        log::debug!(
             "Available regions in advisor data: {:?}",
             advisor_regions.keys().collect::<Vec<_>>()
         );
@@ -242,7 +249,7 @@ fn display_spot_data(
 
     // Process price data
     let price_regions = price_data["config"]["regions"].as_array().unwrap();
-    println!("Number of regions in price data: {}", price_regions.len());
+    log::debug!("Number of regions in price data: {}", price_regions.len());
 
     // Check if the specified region exists in price data
     let region_exists_in_price_data = price_regions
@@ -250,8 +257,8 @@ fn display_spot_data(
         .any(|r| r.get("region").and_then(Value::as_str) == Some(region));
 
     if !region_exists_in_price_data {
-        println!("Warning: Region '{}' not found in price data", region);
-        println!(
+        log::debug!("Warning: Region '{}' not found in price data", region);
+        log::debug!(
             "Available regions in price data: {:?}",
             price_regions
                 .iter()
@@ -272,7 +279,7 @@ fn display_spot_data(
         let region_map = region_data.as_object().unwrap();
 
         if region_name == region {
-            println!(
+            log::debug!(
                 "Found region '{}' in advisor data with {} entries",
                 region_name,
                 region_map.len()
@@ -282,7 +289,7 @@ fn display_spot_data(
         // Check if Linux exists in the region data
         if let Some(linux_data) = region_map.get("Linux") {
             if let Some(linux_instances) = linux_data.as_object() {
-                println!(
+                log::debug!(
                     "Found Linux instances for region {}: {}",
                     region_name,
                     linux_instances.len()
@@ -326,7 +333,7 @@ fn display_spot_data(
         }
     }
 
-    println!(
+    log::info!(
         "Total instance types found in advisor data: {}",
         instance_count
     );
@@ -340,7 +347,7 @@ fn display_spot_data(
         let instance_types = region_data["instanceTypes"].as_array().unwrap();
 
         if region_name == region {
-            println!(
+            log::debug!(
                 "Found region '{}' in price data with {} instance type categories",
                 region_name,
                 instance_types.len()
@@ -352,7 +359,7 @@ fn display_spot_data(
             let sizes = instance_type_data["sizes"].as_array().unwrap();
 
             if region_name == region {
-                println!(
+                log::debug!(
                     "  Instance type category '{}' has {} sizes",
                     instance_type_name,
                     sizes.len()
@@ -377,9 +384,10 @@ fn display_spot_data(
                 price_instance_count += 1;
 
                 if region_name == region && price_instance_count <= 5 {
-                    println!(
+                    log::debug!(
                         "    Instance type: {} -> simple: {}",
-                        full_name, simple_name
+                        full_name,
+                        simple_name
                     );
                 }
 
@@ -420,9 +428,10 @@ fn display_spot_data(
                         info.windows_spot_price = windows_spot_price.clone();
 
                         if region_name == region && price_instance_count <= 5 {
-                            println!(
+                            log::debug!(
                                 "      Updated existing entry: {} with Linux price: {}",
-                                simple_name, linux_spot_price
+                                simple_name,
+                                linux_spot_price
                             );
                         }
                     }
@@ -444,7 +453,7 @@ fn display_spot_data(
         }
     }
 
-    println!(
+    log::info!(
         "Total instance types found in price data: {}",
         price_instance_count
     );
@@ -497,10 +506,11 @@ fn display_spot_data(
     }
 
     // Print the number of instances found
-    println!(
-        "Found {} spot instances for region: {}",
+    log::info!(
+        "Found {} spot instances for region: {}, filtering by instance type: {}",
         table.len() - 1,
-        region
+        region,
+        instance_type.unwrap_or("all")
     );
 
     // Print the table
