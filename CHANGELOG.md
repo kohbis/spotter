@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.2](https://github.com/kohbis/spotter/compare/v0.1.1...v0.1.2) (2025-06-01)
+
+
+### Documentation
+
+* Add Homebrew installation instructions to README ([4bc5c22](https://github.com/kohbis/spotter/commit/4bc5c2211cb6d4d4896bc3fa6c75410aec9894d8))
+
+
+### Code Refactoring
+
+* 💡 Modularize cli ([1b9250b](https://github.com/kohbis/spotter/commit/1b9250bc12871d7af550dd11d7269e0bac74dee9))
+
 ## [0.1.1](https://github.com/kohbis/spotter/compare/v0.1.0...v0.1.1) (2025-05-31)
 
 
