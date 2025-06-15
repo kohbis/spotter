@@ -368,3 +368,207 @@ pub fn display_spot_data(
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+    use std::io;
+
+    #[test]
+    fn test_instance_info_creation() {
+        let info = InstanceInfo {
+            interruption_rate: "< 5%".to_string(),
+            savings: "80%".to_string(),
+            linux_spot_price: "0.123".to_string(),
+            windows_spot_price: "0.456".to_string(),
+            memory_gb: "16".to_string(),
+            cores: "4".to_string(),
+        };
+
+        assert_eq!(info.interruption_rate, "< 5%");
+        assert_eq!(info.savings, "80%");
+        assert_eq!(info.linux_spot_price, "0.123");
+        assert_eq!(info.windows_spot_price, "0.456");
+        assert_eq!(info.memory_gb, "16");
+        assert_eq!(info.cores, "4");
+    }
+
+    // Helper function to create mock advisor data
+    fn create_mock_advisor_data() -> Value {
+        json!({
+            "spot_advisor": {
+                "us-east-1": {
+                    "Linux": {
+                        "m5.large": {
+                            "r": 0,
+                            "s": 80
+                        },
+                        "t3.medium": {
+                            "r": 1,
+                            "s": 70
+                        }
+                    }
+                },
+                "us-west-2": {
+                    "Linux": {
+                        "m5.large": {
+                            "r": 2,
+                            "s": 75
+                        }
+                    }
+                }
+            },
+            "instance_types": {
+                "m5.large": {
+                    "cores": 2,
+                    "ram_gb": 8.0
+                },
+                "t3.medium": {
+                    "cores": 2,
+                    "ram_gb": 4.0
+                }
+            }
+        })
+    }
+
+    // Helper function to create mock price data
+    fn create_mock_price_data() -> Value {
+        json!({
+            "config": {
+                "regions": [
+                    {
+                        "region": "us-east-1",
+                        "instanceTypes": [
+                            {
+                                "type": "m5",
+                                "sizes": [
+                                    {
+                                        "size": "large",
+                                        "valueColumns": [
+                                            {
+                                                "name": "linux",
+                                                "prices": {
+                                                    "USD": "0.123"
+                                                }
+                                            },
+                                            {
+                                                "name": "mswin",
+                                                "prices": {
+                                                    "USD": "0.456"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "t3",
+                                "sizes": [
+                                    {
+                                        "size": "medium",
+                                        "valueColumns": [
+                                            {
+                                                "name": "linux",
+                                                "prices": {
+                                                    "USD": "0.042"
+                                                }
+                                            },
+                                            {
+                                                "name": "mswin",
+                                                "prices": {
+                                                    "USD": "0.073"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "region": "us-west-2",
+                        "instanceTypes": [
+                            {
+                                "type": "m5",
+                                "sizes": [
+                                    {
+                                        "size": "large",
+                                        "valueColumns": [
+                                            {
+                                                "name": "linux",
+                                                "prices": {
+                                                    "USD": "0.119"
+                                                }
+                                            },
+                                            {
+                                                "name": "mswin",
+                                                "prices": {
+                                                    "USD": "0.442"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        })
+    }
+
+    // Test display_spot_data with no instance type filter
+    #[test]
+    fn test_display_spot_data_no_filter() -> Result<(), Box<dyn Error>> {
+        // Redirect stdout to capture the table output
+        let stdout = io::stdout();
+        let mut _handle = stdout.lock();
+
+        // Create mock data
+        let advisor_data = create_mock_advisor_data();
+        let price_data = create_mock_price_data();
+
+        // Call the function with no instance type filter
+        let result = display_spot_data("us-east-1", None, &advisor_data, &price_data, false);
+
+        // Check that the function executed without errors
+        assert!(result.is_ok());
+
+        // We can't easily test the actual table output in a unit test,
+        // but we can verify the function completed successfully
+        Ok(())
+    }
+
+    // Test display_spot_data with instance type filter
+    #[test]
+    fn test_display_spot_data_with_filter() -> Result<(), Box<dyn Error>> {
+        // Create mock data
+        let advisor_data = create_mock_advisor_data();
+        let price_data = create_mock_price_data();
+
+        // Call the function with an instance type filter
+        let result = display_spot_data("us-east-1", Some("m5"), &advisor_data, &price_data, false);
+
+        // Check that the function executed without errors
+        assert!(result.is_ok());
+
+        Ok(())
+    }
+
+    // Test display_spot_data with spot price display
+    #[test]
+    fn test_display_spot_data_with_spot_price() -> Result<(), Box<dyn Error>> {
+        // Create mock data
+        let advisor_data = create_mock_advisor_data();
+        let price_data = create_mock_price_data();
+
+        // Call the function with spot price display enabled
+        let result = display_spot_data("us-east-1", None, &advisor_data, &price_data, true);
+
+        // Check that the function executed without errors
+        assert!(result.is_ok());
+
+        Ok(())
+    }
+}
