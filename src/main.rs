@@ -1,6 +1,6 @@
+mod aws;
 mod cli;
-mod fetch;
-mod process;
+mod display;
 
 use clap::Parser;
 use reqwest::Client;
@@ -14,10 +14,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .init();
 
     let client = Client::new();
-    let advisor_data = fetch::fetch_spot_advisor_data(&client).await?;
-    let price_data = fetch::fetch_spot_price_data(&client).await?;
+    let advisor_data = aws::fetch_spot_advisor_data(&client).await?;
+    let price_data = aws::fetch_spot_price_data(&client).await?;
 
-    process::display_spot_data(
+    display::display_spot_data(
         &cli.region,
         cli.instance_type.as_deref(),
         &advisor_data,
