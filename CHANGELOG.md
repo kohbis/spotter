@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.1.3](https://github.com/kohbis/spotter/compare/v0.1.2...v0.1.3) (2025-06-15)
+
+
+### Features
+
+* 🎸 implement AWS data fetching and display functionality ([b95bde8](https://github.com/kohbis/spotter/commit/b95bde819217b8dc57b21d45f4455d9b7e6740aa))
+
+
+### Tests
+
+* 🧪 add unit tests for CLI and display functionality ([3d033bb](https://github.com/kohbis/spotter/commit/3d033bba43e2274edd764a4b70851886056593fd))
+
+
+### Build System
+
+* **deps:** bump clap from 4.5.39 to 4.5.40 ([0e52708](https://github.com/kohbis/spotter/commit/0e5270805e208d9cee20823d047d81142d6bd301))
+* **deps:** bump reqwest from 0.12.19 to 0.12.20 ([dcd4563](https://github.com/kohbis/spotter/commit/dcd456323d6311e22d40b16f77ef7343efde36ab))
+
 ## [0.1.2](https://github.com/kohbis/spotter/compare/v0.1.1...v0.1.2) (2025-06-01)
 
 
