@@ -187,3 +187,36 @@ pub async fn fetch_spot_price_data(client: &Client) -> Result<Value, Box<dyn Err
 
     Ok(data)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    // This test mocks the process of extracting JSON from the callback function
+    #[test]
+    fn test_extract_json_from_callback() {
+        let callback_text = "callback({\"key\": \"value\"})";
+
+        // Extract JSON from callback function
+        let callback_prefix = "callback(";
+        let start_idx = callback_text
+            .find(callback_prefix)
+            .map(|idx| idx + callback_prefix.len())
+            .unwrap_or_else(|| callback_text.find('{').unwrap_or(0));
+
+        let end_idx = callback_text.rfind('}').unwrap_or(callback_text.len());
+        let json_str = &callback_text[start_idx..=end_idx];
+
+        // Remove trailing parenthesis if present
+        let json_str = if json_str.ends_with(')') {
+            &json_str[..json_str.len() - 1]
+        } else {
+            json_str
+        };
+
+        let data = serde_json::from_str::<Value>(json_str).unwrap();
+
+        assert_eq!(data, json!({"key": "value"}));
+    }
+}
