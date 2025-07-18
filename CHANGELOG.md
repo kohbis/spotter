@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.4](https://github.com/kohbis/spotter/compare/v0.1.3...v0.1.4) (2025-07-18)
+
+
+### Features
+
+* **cli:** add region validation and error handling for invalid AWS regions ([d062412](https://github.com/kohbis/spotter/commit/d062412593f6c1fe1e7301a0ef9f80379c9bc914))
+* integrate anyhow for error handling and add anyhow dependency ([a52ae55](https://github.com/kohbis/spotter/commit/a52ae55b20b17ce8a09491f104ab30f3c2495aee))
+
+
+### Build System
+
+* **deps:** bump clap from 4.5.40 to 4.5.41 ([ddf90ab](https://github.com/kohbis/spotter/commit/ddf90ab1a55192c844630bb0a8aa4945b80899cc))
+* **deps:** bump reqwest from 0.12.20 to 0.12.22 ([325fada](https://github.com/kohbis/spotter/commit/325fadafbd3a70f8e83395fb214d95cb208dc9f7))
+* **deps:** bump tokio from 1.45.1 to 1.46.1 ([43cde69](https://github.com/kohbis/spotter/commit/43cde69bd6e6d9cca8926722152192facf64fdbe))
+
 ## [0.1.3](https://github.com/kohbis/spotter/compare/v0.1.2...v0.1.3) (2025-06-15)
 
 
