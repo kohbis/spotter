@@ -1,7 +1,7 @@
+use anyhow::Result;
 use prettytable::{Cell, Row, Table};
 use serde_json::Value;
 use std::collections::HashMap;
-use std::error::Error;
 
 #[derive(Clone, Debug)]
 pub struct InstanceInfo {
@@ -19,7 +19,7 @@ pub fn display_spot_data(
     advisor_data: &Value,
     price_data: &Value,
     show_spot_price: bool,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<()> {
     // Create a table to display the data
     let mut table = Table::new();
 
@@ -520,7 +520,7 @@ mod tests {
 
     // Test display_spot_data with no instance type filter
     #[test]
-    fn test_display_spot_data_no_filter() -> Result<(), Box<dyn Error>> {
+    fn test_display_spot_data_no_filter() -> Result<()> {
         // Redirect stdout to capture the table output
         let stdout = io::stdout();
         let mut _handle = stdout.lock();
@@ -542,7 +542,7 @@ mod tests {
 
     // Test display_spot_data with instance type filter
     #[test]
-    fn test_display_spot_data_with_filter() -> Result<(), Box<dyn Error>> {
+    fn test_display_spot_data_with_filter() -> Result<()> {
         // Create mock data
         let advisor_data = create_mock_advisor_data();
         let price_data = create_mock_price_data();
@@ -558,7 +558,7 @@ mod tests {
 
     // Test display_spot_data with spot price display
     #[test]
-    fn test_display_spot_data_with_spot_price() -> Result<(), Box<dyn Error>> {
+    fn test_display_spot_data_with_spot_price() -> Result<()> {
         // Create mock data
         let advisor_data = create_mock_advisor_data();
         let price_data = create_mock_price_data();
