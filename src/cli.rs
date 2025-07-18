@@ -1,7 +1,6 @@
+use anyhow::{Result, anyhow};
 use clap::Parser;
 use clap_verbosity_flag::{InfoLevel, Verbosity};
-use std::error::Error;
-use std::fmt;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -21,23 +20,6 @@ pub struct Cli {
     #[clap(flatten)]
     pub verbose: Verbosity<InfoLevel>,
 }
-
-#[derive(Debug)]
-pub struct InvalidRegionError {
-    pub region: String,
-}
-
-impl fmt::Display for InvalidRegionError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "Invalid AWS region '{}'. Please use a valid AWS region code (e.g., us-east-1, eu-west-1, ap-northeast-1)",
-            self.region
-        )
-    }
-}
-
-impl Error for InvalidRegionError {}
 
 /// List of valid AWS regions
 /// ref: https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions.html
@@ -74,19 +56,20 @@ const VALID_AWS_REGIONS: &[&str] = &[
 ];
 
 /// Validates if the provided region is a valid AWS region
-pub fn validate_region(region: &str) -> Result<(), InvalidRegionError> {
+pub fn validate_region(region: &str) -> Result<()> {
     if VALID_AWS_REGIONS.contains(&region) {
         Ok(())
     } else {
-        Err(InvalidRegionError {
-            region: region.to_string(),
-        })
+        Err(anyhow!(
+            "Invalid AWS region '{}'. Please use a valid AWS region code (e.g., us-east-1, eu-west-1, ap-northeast-1)",
+            region
+        ))
     }
 }
 
 impl Cli {
     /// Validates the CLI arguments
-    pub fn validate(&self) -> Result<(), Box<dyn Error>> {
+    pub fn validate(&self) -> Result<()> {
         validate_region(&self.region)?;
         Ok(())
     }
@@ -177,13 +160,8 @@ mod tests {
         let result = validate_region("invalid-region");
         assert!(result.is_err());
 
-        let error = result.unwrap_err();
-        assert_eq!(error.region, "invalid-region");
-        assert!(
-            error
-                .to_string()
-                .contains("Invalid AWS region 'invalid-region'")
-        );
+        let error_message = result.unwrap_err().to_string();
+        assert!(error_message.contains("Invalid AWS region 'invalid-region'"));
 
         // Test other invalid regions
         assert!(validate_region("us-east-3").is_err());

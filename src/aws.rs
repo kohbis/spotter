@@ -1,12 +1,12 @@
+use anyhow::Result;
 use reqwest::Client;
 use serde_json::Value;
-use std::error::Error;
 
 pub const SPOT_ADVISOR_DATA_URL: &str =
     "https://spot-bid-advisor.s3.amazonaws.com/spot-advisor-data.json";
 pub const SPOT_PRICE_DATA_URL: &str = "http://spot-price.s3.amazonaws.com/spot.js";
 
-pub async fn fetch_spot_advisor_data(client: &Client) -> Result<Value, Box<dyn Error>> {
+pub async fn fetch_spot_advisor_data(client: &Client) -> Result<Value> {
     log::info!("Fetching spot advisor data...");
     let url = SPOT_ADVISOR_DATA_URL;
     let response = client.get(url).send().await?;
@@ -73,7 +73,7 @@ pub async fn fetch_spot_advisor_data(client: &Client) -> Result<Value, Box<dyn E
     Ok(data)
 }
 
-pub async fn fetch_spot_price_data(client: &Client) -> Result<Value, Box<dyn Error>> {
+pub async fn fetch_spot_price_data(client: &Client) -> Result<Value> {
     log::info!("Fetching spot price data...");
     let url = SPOT_PRICE_DATA_URL;
     let response = client.get(url).send().await?;

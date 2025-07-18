@@ -2,11 +2,12 @@ mod aws;
 mod cli;
 mod display;
 
+use anyhow::Result;
 use clap::Parser;
 use reqwest::Client;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<()> {
     let cli = cli::Cli::parse();
 
     // Validate CLI arguments
