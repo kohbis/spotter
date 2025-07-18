@@ -9,6 +9,12 @@ use reqwest::Client;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = cli::Cli::parse();
 
+    // Validate CLI arguments
+    if let Err(e) = cli.validate() {
+        eprintln!("Error: {}", e);
+        std::process::exit(1);
+    }
+
     env_logger::Builder::new()
         .filter_level(cli.verbose.log_level_filter())
         .init();
