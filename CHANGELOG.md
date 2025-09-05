@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.1.5](https://github.com/kohbis/spotter/compare/v0.1.4...v0.1.5) (2025-09-05)
+
+
+### Build System
+
+* **deps:** bump actions/checkout from 4 to 5 ([ac6a87b](https://github.com/kohbis/spotter/commit/ac6a87be132fe4b48f8689dce8d8bbf9711fb468))
+* **deps:** bump anyhow from 1.0.98 to 1.0.99 ([ad1329a](https://github.com/kohbis/spotter/commit/ad1329a58fd882e1575b88d336f4bf0b2160008a))
+* **deps:** bump clap from 4.5.41 to 4.5.42 ([bb5fd84](https://github.com/kohbis/spotter/commit/bb5fd847089294f54f5e559a9df9013856ec2a9e))
+* **deps:** bump clap from 4.5.42 to 4.5.43 ([f5b8162](https://github.com/kohbis/spotter/commit/f5b81621998a3535118d3edfcca057ca28caae8d))
+* **deps:** bump clap from 4.5.43 to 4.5.45 ([859dbf7](https://github.com/kohbis/spotter/commit/859dbf7dca3858230c5d8f78dda0ac3dee3cf458))
+* **deps:** bump clap-verbosity-flag from 3.0.3 to 3.0.4 ([dc50d3d](https://github.com/kohbis/spotter/commit/dc50d3d978c71a921b4467354ac6f6ca91914681))
+* **deps:** bump reqwest from 0.12.22 to 0.12.23 ([78b057b](https://github.com/kohbis/spotter/commit/78b057b4bddb4dec804dc109e3829f9c6ad72d2e))
+* **deps:** bump serde_json from 1.0.140 to 1.0.141 ([7de90ad](https://github.com/kohbis/spotter/commit/7de90add41c182eff9eb53ce27638c74c38f98c1))
+* **deps:** bump serde_json from 1.0.141 to 1.0.142 ([10a789b](https://github.com/kohbis/spotter/commit/10a789b3815fdb3fbea9c868d3b8c23b5eb8821b))
+* **deps:** bump serde_json from 1.0.142 to 1.0.143 ([29a582e](https://github.com/kohbis/spotter/commit/29a582ec430831b1cf3ab74331f53b5aceed71e2))
+* **deps:** bump tokio from 1.46.1 to 1.47.1 ([697fb42](https://github.com/kohbis/spotter/commit/697fb423dfaeb3eb54baf4a187a7ff89a82d7eb4))
+
 ## [0.1.4](https://github.com/kohbis/spotter/compare/v0.1.3...v0.1.4) (2025-07-18)
 
 
