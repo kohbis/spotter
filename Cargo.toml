@@ -1,6 +1,6 @@
 [package]
 name = "spotter"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2024"
 license = "MIT"
 description = "AWS EC2 Spot Instance Advisor CLI Tool"
