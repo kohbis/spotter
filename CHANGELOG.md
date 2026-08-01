@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.6](https://github.com/kohbis/spotter/compare/v0.1.5...v0.1.6) (2026-08-01)
+
+
+### Build System
+
+* **deps:** bump anyhow from 1.0.102 to 1.0.103 ([706b731](https://github.com/kohbis/spotter/commit/706b7319349858356bf2a1a6de9c956c820bbffb))
+* **deps:** bump env_logger from 0.11.10 to 0.11.11 ([135fdef](https://github.com/kohbis/spotter/commit/135fdef496c544123aaf15f68d9f866e7218bee6))
+* **deps:** bump log from 0.4.29 to 0.4.33 ([cab0d69](https://github.com/kohbis/spotter/commit/cab0d6944d0932e8800eb33bb2276ce860905d69))
+* **deps:** bump quinn-proto from 0.11.14 to 0.11.16 ([5271691](https://github.com/kohbis/spotter/commit/5271691305d33df235fc17bb637a015c19bc5e1c))
+* **deps:** bump reqwest from 0.13.3 to 0.13.4 ([880a758](https://github.com/kohbis/spotter/commit/880a75872aaf1a95744170b8cbd91d2f386402af))
+* **deps:** bump serde_json from 1.0.149 to 1.0.150 ([df3446d](https://github.com/kohbis/spotter/commit/df3446d6e5d3fbddf12a8a521bc462bb8742d5d7))
+* **deps:** bump tokio from 1.52.1 to 1.53.0 ([aa05db1](https://github.com/kohbis/spotter/commit/aa05db19cb8367252070e110c8894280960cf960))
+
 ## [0.1.5](https://github.com/kohbis/spotter/compare/v0.1.4...v0.1.5) (2026-07-01)
 
 
