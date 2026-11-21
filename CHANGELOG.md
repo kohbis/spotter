@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.7](https://github.com/kohbis/spotter/compare/v0.1.6...v0.1.7) (2026-11-21)
+
+
+### Build System
+
+* **deps:** bump anyhow from 1.0.103 to 1.0.104 ([1dd82b6](https://github.com/kohbis/spotter/commit/1dd82b69d8aa6b0e6ca3ce0c4884f7f7246dd281))
+* **deps:** bump clap from 4.6.1 to 4.6.7 ([e2e515e](https://github.com/kohbis/spotter/commit/e2e515e888e25570ff3a0db72314a9708531e54a))
+* **deps:** bump clap from 4.6.7 to 4.6.8 ([2069796](https://github.com/kohbis/spotter/commit/2069796a1a0d710673b2269598a140321453a332))
+* **deps:** bump log from 0.4.33 to 0.4.35 ([b06f9ee](https://github.com/kohbis/spotter/commit/b06f9ee64120cca813541d4ed3b8a96845909e2e))
+* **deps:** bump reqwest from 0.13.4 to 0.13.5 ([d0d1478](https://github.com/kohbis/spotter/commit/d0d147824350791a37c435926791776cee6db319))
+* **deps:** bump serde from 1.0.228 to 1.0.229 ([838ff5c](https://github.com/kohbis/spotter/commit/838ff5c119d2e78e299a17a538bf6401f378b533))
+* **deps:** bump serde_json from 1.0.150 to 1.0.151 ([7470b37](https://github.com/kohbis/spotter/commit/7470b37afdfe18b14fe3dcc330b16d61f268d5b2))
+* **deps:** bump serde_json from 1.0.151 to 1.0.154 ([e8c3c8b](https://github.com/kohbis/spotter/commit/e8c3c8b25f43f6bad22b65e6d83b4bbcd20df3fe))
+* **deps:** bump tokio from 1.53.0 to 1.53.1 ([97c5f1a](https://github.com/kohbis/spotter/commit/97c5f1a915f056225f79cd069431ce9fa3d85cf9))
+* **deps:** bump tokio from 1.53.1 to 1.54.1 ([80ae783](https://github.com/kohbis/spotter/commit/80ae78330bde1e8defd62b0fafaf577637484e69))
+
 ## [0.1.6](https://github.com/kohbis/spotter/compare/v0.1.5...v0.1.6) (2026-08-01)
 
 
